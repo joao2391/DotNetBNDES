@@ -1,0 +1,629 @@
+﻿
+<script language='javascript'>
+
+	//Variáveis do ASP repassadas para o JavaScript
+	var DataAtualAsp_Dia = 14
+	var DataAtualAsp_Mes = 11
+	var DataAtualAsp_Ano = 2021
+	var Application_SiteRoot = 'https://www.cartaobndes.gov.br/cartaobndes/'
+</script>
+
+<script type='text/javascript' src='../Lib/Js/Constantes.JS?ctrl='></script>
+<script type='text/javascript' src='../Lib/Js/Classe_TListaMsgErro.JS?ctrl='></script>
+<script type='text/javascript' src='../Lib/Js/Critica.JS?ctrl='></script>
+<script type='text/javascript' src='../Lib/Js/Geral_Lib.JS?ctrl='></script>
+<script type='text/javascript' src='../Lib/ajax/gera_ticket.js?ctrl='></script>
+<html>
+<head>
+    <title>Cartão BNDES</title>
+    <link href="../Bndes.css" rel="stylesheet" type="text/css">
+
+    <script type="text/javascript" src="/cartaobndes/Lib/js/jquery-1.10.2.js"></script>
+    <link rel="stylesheet" href="/cartaobndes/css/jquery-ui-1.10.3.custom.css" type="text/css">
+    <script type="text/javascript" src="/cartaobndes/Lib/js/jquery-ui-1.10.3.custom.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <script language="javascript">
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//  Página: Funcoes_Catalogo_inc.js
+//  Propósito: Funções em JavaScript para TCatalogo
+//  Autor     : Rodrigo Alves
+//  Data de Criação  : 22/11/2004
+//////////////////////////////////////////////////////////////////////////////////////////
+
+function Checa_e_Exec_Busca(Acao,Pesq,Papel)
+{
+   var result = '';
+
+   switch (Acao) {
+      case 'BS':
+         result = CriticaCampoBuscaSimples();
+         if (result) {
+            result = EnviaForm('frm');
+         }
+         break;
+
+      case 'BA':
+            result = CriticaCamposBuscaAvancada(Papel);
+            if (result) {
+               document.frm.chr_RetornoPesquisa.value = Pesq;
+               if (document.frm.chr_OrdemNome) {
+                   document.frm.chr_OrdemNome.value = '';
+                }
+                result = EnviaForm('frm');
+            }
+            break;
+   }
+   return result;
+}
+
+// Critica campos da busca
+function CriticaCampoBuscaSimples()
+{
+   var valor = '';
+   var valor2 = '';
+   var nome = '';
+
+   var PrimeiroErro = '';
+
+   valor = document.frm.chr_PalavraPesquisada.value;
+   nome = ' Palavra Pesquisada';
+
+   valor2 = TrimJS(valor);
+
+   if (valor2 == '') {
+      if (Obrigatorio(valor,nome))
+         if (PrimeiroErro == '')
+            PrimeiroErro = 'chr_PalavraPesquisada';
+   }
+   else {
+      if (PalavrasBusca(valor2,nome)) {
+         if (PrimeiroErro == '')
+            PrimeiroErro = 'chr_PalavraPesquisada';
+      }
+   }
+
+   if (PrimeiroErro != '')
+      eval('document.frm.' + PrimeiroErro + '.focus();');
+
+   return    lista.Finaliza();
+}
+
+// Critica campos da busca Avancada
+function CriticaCamposBuscaAvancada(Papel)
+{
+   var valor1 = '';
+   var valor2 = '';
+   var valor3 = '';
+   var valor4 = '';
+   var nome1  = '';
+   var nome2  = '';
+
+   var PrimeiroErro = '';
+
+   valor1 = document.frm.chr_NomeProduto.value;
+   nome1 = ' Nome do Produto';
+
+   valor2 = document.frm.chr_NomeFornecedor.value;
+   nome2 = ' Nome do Fornecedor';
+
+   if (document.frm.chr_ProcuraDescricaoProduto) {
+      valor3 = document.frm.chr_ProcuraDescricaoProduto.checked;
+   }
+
+   if (document.frm.chr_ParticipaVendasAutomaticas) {
+      valor4 = document.frm.chr_ParticipaVendasAutomaticas.checked;
+   }
+
+   if ((Papel != PP_ACQUIRER) && ((valor1 == '') && (valor2 == '') && (!valor3) && (!valor4)))   {
+      alert('Favor prencher pelo menos um dos campos: Nome do Produto ou Nome do Fornecedor');
+      if (PrimeiroErro == '')
+         PrimeiroErro = 'chr_NomeProduto';
+    }
+    else {
+      if (valor1 != '') {
+         if (PalavrasBusca(valor1,nome1))
+            if (PrimeiroErro == '')
+               PrimeiroErro = 'chr_NomeProduto';
+      }
+
+      if (valor2 != '') {
+         if (PalavrasBusca(valor2,nome2))
+            if (PrimeiroErro == '')
+               PrimeiroErro = 'chr_NomeFornecedor';
+      }
+
+      if (document.frm.chr_ProcuraDescricaoProduto) {
+         if  ((valor3 && valor1 == '')) {
+            if (Obrigatorio(valor1,nome1))
+               if (PrimeiroErro == '')
+                  PrimeiroErro = 'chr_NomeProduto';
+         }
+      }
+
+      if (PrimeiroErro != '')
+         eval('document.frm.' + PrimeiroErro + '.focus();');
+
+      return lista.Finaliza();
+   }
+   if (PrimeiroErro != '')
+      eval('document.frm.' + PrimeiroErro + '.focus();');
+}
+
+function LinkEnviaForm(id_CTRL, chr_Acao)
+{
+   document.frm.action = 'Catalogo.asp?Acao=' + chr_Acao + '&CTRL=' + id_CTRL;
+   document.frm.submit();
+}
+
+
+function PosicionaScroll()
+{
+   document.cookie = 'PosicaoScroll=' + document.body.scrollTop ;
+}
+
+
+function LeValorPosicaoScroll()
+{
+   if (document.body && document.cookie.indexOf('PosicaoScroll=') != -1) {
+      ValorCookie = document.cookie;
+      PosIni = ValorCookie.indexOf('PosicaoScroll=') + 14;
+      Parte = ValorCookie.substring(PosIni,PosIni+10);
+      PosFin = Parte.indexOf(';');
+      ValorTop = ValorCookie.substring(PosIni,PosIni+PosFin);
+      window.scrollTo(0,ValorTop);
+      document.cookie = 'PosicaoScroll=0';
+   }
+}
+
+//Função que marca todos os checkBox da página
+// ao clicar no check que seleciona todos
+function SelecionaTodos()
+{
+   var valor;
+   var valor1;
+
+   valor1 = document.frm.MarcarTodos.checked;
+
+   if (document.frm.chr_Produtos.length) {
+      valor = document.frm.chr_Produtos.length;
+   }
+   else {
+      valor = 1;
+   }
+
+   if(valor1) {
+      for (i=0; i < valor; i++) {
+         if (valor == 1) {
+            document.frm.chr_Produtos.checked = true;
+         }
+         else {
+            document.frm.chr_Produtos[i].checked = true;
+         }
+      }
+   }
+   else {
+      for (i=0; i < valor; i++) {
+         if (valor == 1) {
+            document.frm.chr_Produtos.checked = false;
+         }
+         else {
+            document.frm.chr_Produtos[i].checked = false;
+         }
+      }
+
+   }
+}
+
+// Função que verifica
+//   1) Ao montar a página, se todos os registros da página já foram processados, se estiverem, eles voltarão
+//      com todos os checkBox marcados, então ele marca o checkbox que seleciona todos.
+//   2) No click de qq checkBox, se foram marcados todos ele marca o checkBox que seleciona todos;
+//      se algum for desmarcado, ele o desmarca.
+function VerificaMarcados()
+{
+   var valor;
+   var bln;
+
+   if (document.frm.chr_Produtos.length) {
+      valor = document.frm.chr_Produtos.length;
+   }
+   else {
+      valor = 1;
+   }
+
+   bln = true;
+
+   for (i=0; i < valor; i++) {
+      if (valor == 1) {
+         bln = bln && document.frm.chr_Produtos.checked;
+      }
+      else {
+         bln = bln && document.frm.chr_Produtos[i].checked;
+      }
+   }
+   if (bln == true) {
+      document.frm.MarcarTodos.checked = true;
+   }
+   else {
+      document.frm.MarcarTodos.checked = false;
+   }
+
+}
+
+// Função para verificar todas as imagens e acionar o redimensionamento se for imagem de produto do catálogo (name=ImgProdutoX).
+// Chamada: evento ONLOAD da tag BODY da página.
+// Autor: Filipe de Souza
+// Data de Criação: 02/08/2011
+function VerificaImagens(strTipo)
+{
+   var strImagem;
+
+   for (i=0; i < document.images.length; i++) {
+      strImagem = document.images[i].name;
+      if (strImagem.substring(0,10) == "ImgProduto") {
+         if (strTipo == "PEQUENA") {
+            RedimensionaImagem(strImagem,94,82);
+         }
+         else if (strTipo == "GRANDE") {
+            RedimensionaImagem(strImagem,154,120);
+         }
+      }
+   }
+}
+
+// Função para redimensionar proporcionalmente uma imagem considerando os tamanhos máximos de Largura e Altura estabelecidos.
+// Chamada: função VerificaImagens().
+// Autor: Filipe de Souza
+// Data de Criação: 02/08/2011
+function RedimensionaImagem(strImagem,intLargura,intAltura)
+{
+   if (document.images[strImagem].width != intLargura) {
+      document.images[strImagem].style.width  = intLargura;
+      document.images[strImagem].style.height = "auto";
+   }
+   if (document.images[strImagem].height > intAltura) {
+      document.images[strImagem].style.width  = "auto";
+      document.images[strImagem].style.height = intAltura;
+   }
+}
+
+
+// Função: Verifica se deve ou não exibir o formulário de captcha. Chamada no evento ONLOAD da tag BODY da página.
+function VerificaCaptcha()
+{
+   if (document.frmCaptcha.bloq.value == "S") {
+      showRecaptchaV2();
+   }
+}
+
+// Função: Envia o formulário de captcha com os parâmetros da página
+function EnviaFormCaptcha()
+{
+   document.frmCaptcha.action = document.frmCaptcha.Link2.value
+         + "?Acao=" + document.frmCaptcha.Acao2.value
+         + '&CTRL=' + document.frmCaptcha.CTRL2.value
+         + "&Cod="  + document.frmCaptcha.Cod2.value
+         + "&RP="   + document.frmCaptcha.RP2.value;
+   EnviaForm('frmCaptcha');
+}
+
+
+// Função: Chama a validação do valor digitado para o captcha
+var validaCaptcha = function() {
+   return $.ajax({
+      type: "GET",
+      url: '/cartaobndes/Lib1/AJAX/CatalogoAjax.asp?acao=ValidarCaptcha&chr_recaptcha_response_field='
+               + $('#recaptcha_response_field').val() + '&chr_recaptcha_challenge_field=' + $('#recaptcha_challenge_field').val(),
+      async: false
+   }).responseText;
+}
+
+// Função: Chama a validação do valor digitado para o recaptcha
+var validaReCaptcha = function() {
+   return $.ajax({
+      type: "GET",
+      url: '/cartaobndes/Lib1/AJAX/CatalogoAjax.asp?acao=ValidarCaptcha&chr_captcha_response=' + grecaptcha.getResponse()
+               + '&chr_CNPJPessoa='
+               + '&chr_LoginUsuario=',
+      async: false
+   }).responseText;
+
+}
+
+// Função: Submete o formulário de captcha
+var submitFormComCaptcha = function() {
+   var ret;
+   ret = validaReCaptcha();
+   EnviaFormCaptcha();
+}
+
+// Função: Exibe o recaptcha
+var showRecaptchaV2 = function() {
+				grecaptcha.render('recaptcha-container', {
+					'sitekey' : '6LcHa0wUAAAAALXQd0QYzen6Y1m5QAhuesWXpwDn'
+				});
+				$( "#modal" ).dialog({
+					width: 360,
+					modal: true,
+					closeText :"",
+					title: "Validação anti-robô",
+					close: function () {$('#modal').remove();},
+					buttons: [
+						{
+							text: "Enviar",
+							click: function (){
+								callback(grecaptcha.getResponse());
+								$('#modal').remove();
+							}
+						}
+					]
+				});
+
+			}
+
+    </script>
+
+</head>
+
+<body BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#000080" onload="LeValorPosicaoScroll();VerificaImagens('PEQUENA');VerificaCaptcha();" leftmargin="0" topmargin="0" rightmargin="0" bottommargin="0" marginwidth="0" marginheight="0">
+
+    <div id="geral">
+
+        <script type='text/javascript' src='../Lib1/Js/Funcoes_Menu_Inc.JS'></script>
+        <script type='text/javascript' src='../Lib1/Js/Funcoes_Popup_Inc.JS'></script>
+        <link rel="stylesheet" href="../css/comum.css">
+        <!------CABEÇALHO---------->
+        <div id="cabecalho">
+            <div id="barraLogotipo">
+                <div id="logotipo">
+                    <a class="navbar-brand" href="../index.asp"><img alt="Cartão BNDES" id="cabecalho-cartao" title="Ir para https://www.cartaobndes.gov.br" src="../Images/header_CARTAO-01.png"></a>
+                    <a class="navbar-brand" href="https://www.bndes.gov.br"><img alt="Cartão BNDES" id="cabecalho-bndes" title="Ir para https://www.bndes.gov.br" src="../Images/header_BNDES-01.png" style="margin-left:0px;"></a>
+                </div>
+                <span id="servidor">
+                    <font face="arial" size="6">
+                        <b>
+                            &nbsp;&nbsp;
+
+                        </b>
+                    </font>
+                </span>
+            </div>
+            <div class="LinkMenuSup">
+                <span class="itemMenuSup">
+                    <a href="#" onclick="Simulador('');return false;" onfocus="blur()">Simulador</a>
+                </span>
+                <span class="itemMenuSup">
+                    <a href="FAQ.asp?Acao=T&amp;CTRL=" onfocus="blur()">Dúvidas</a>
+                </span>
+                <span class="itemMenuSup">
+                    <a href="#" onclick="PopUpIntermediario('https://www.bndes.gov.br');return false;" onfocus="blur()">Fale Conosco</a>
+                </span>
+                <span class="itemMenuSup">
+                    <a href="Catalogo.asp?Acao=BS&amp;CTRL=" onfocus="blur()">Busca de Produtos</a>
+                </span>
+                <span class="itemMenuSup">
+                    <a href="Catalogo.asp?Acao=AC&amp;CTRL=" onfocus="blur()">Categorias de Produtos</a>
+                </span>
+                <span class="itemMenuSup">
+
+                    <a href="Download.asp?Acao=TF&CTRL=" onfocus="blur()">Manuais</a>
+
+                </span>
+                <span class="itemMenuSup">
+                    <a href="../PaginasCartao/Download.asp?Acao=DV&amp;CTRL=" onfocus="blur()">Material para Fornecedores</a>
+                </span>
+                <span class="itemMenuSup">
+                    <a href="../PaginasCartao/Download.asp?Acao=REGRASDOPORTAL&amp;CTRL=" onfocus="blur()">Regras</a>
+                </span>
+
+            </div>
+        </div>
+
+        <DIV ID="statusAcesso">
+
+        </DIV>
+        <DIV ID="statusTelaLogada">
+            <SPAN ID="barraPapelUsuario">
+
+                <IMG width=140 height=42 SRC=../Images/Titulos/img_titulo_cartao.gif>
+            </SPAN>
+            <SPAN ID="pontaBarraPapelUsuario">
+
+                <IMG SRC=../Images/Tocos/img_toco_titulo_geral.gif>
+            </SPAN>
+            <SPAN ID="caminhoTelaAtual" CLASS="Texto16">
+                Cat&aacute;logo > Busca Simples&nbsp;&nbsp;
+            </SPAN>
+        </DIV>
+        <!---- PRINCIPAL ---->
+        <DIV ID="centro">
+
+
+            <!---- MENU LATERAL ---->
+            <div id='menuLateral' style="BACKGROUND-COLOR:#E7F7FF;">
+                <script type='text/javascript'>function GoToLink(lText) {lText.indexOf('javascript:')!=-1?eval(lText):window.location.href=lText}</script>
+                <div class='itemMenuLateral' id="menu_SejaumFornecedor1" onclick=GoToLink('Fornecedor3.asp?Acao =IdentificacaoFornecedor&CTRL =') style="color:#022E93; background:#E7F7FF;" onMouseOver="this.style.color='white';this.style.background='#2154B5';" onMouseOut="this.style.color='#022E93';this.style.background='#E7F7FF';">Seja um Fornecedor</div>
+                <div class='itemMenuLateral' id="menu_SoliciteseuCartatildeo1" onclick=GoToLink('https://www.cartaobndes.gov.br/cartaobndes/') style="color:#022E93; background:#E7F7FF;" onMouseOver="this.style.color='white';this.style.background='#2154B5';" onMouseOut="this.style.color='#022E93';this.style.background='#E7F7FF';">Solicite seu Cart&atilde;o</div>
+                <div class='itemMenuLateral' id="menu_Tutorial1" onclick=javascript:window.open("http://conhecer.cartaobndes.gov.br","_blank") style="color:#022E93; background:#E7F7FF;" onMouseOver="this.style.color='white';this.style.background='#2154B5';" onMouseOut="this.style.color='#022E93';this.style.background='#E7F7FF';">Tutorial</div>
+                <div id='barraLateralInferior' style="BACKGROUND-COLOR:#E7F7FF;">
+                    <span>&nbsp;</span>
+                </div>
+            </div>
+            <DIV ID="miolo">
+
+                <form name="frmCaptcha" id="frmCaptcha" action="" method="Post" onsubmit="return false;">
+                    <input type="hidden" name="Acao2" value="RBS">
+                    <input type="hidden" name="CTRL2" value="">
+                    <input type="hidden" name="Cod2" value="">
+                    <input type="hidden" name="RP2" value="">
+                    <input type="hidden" name="Link2" value="Catalogo.asp">
+
+                    <input type="hidden" name="bloq" value="N">
+
+                    <input type="hidden" name="chr_PalavraPesquisadaHidden" value="cimento">
+                    <input type="hidden" name="chr_PalavraPesquisada" value="cimento">
+                    <input type="hidden" name="int_PaginaAtual" value="">
+                    <input type="hidden" name="chr_NomeProduto" value="">
+                    <input type="hidden" name="chr_NomeFornecedor" value="">
+                    <input type="hidden" name="chr_FiltroLetra" value="">
+                    <input type="hidden" name="chr_RetornoPesquisa" value="">
+                    <input type="hidden" name="chr_ParticipaVendasAutomaticas" value="">
+                    <input type="hidden" name="chr_ProcuraDescricaoProduto" value="">
+                    <input type="hidden" name="chr_Produtos" value="">
+                    <input type="hidden" name="chr_TodosProdutos" value="">
+                    <input type="hidden" name="chr_ListarBloqueados" value="">
+                    <input type="hidden" name="chr_ListarExcluidos" value="">
+                </form>
+
+
+
+                <form onsubmit="return false;" id="frm" name="frm" action="Catalogo.asp?Acao=RBS&amp;CTRL=" method="Post">
+                    <table class="Tabela1" border="0" cellspacing="0" cellpadding="0" width="610" height="1" align="center">
+                        <tr class="TituloTabela3" valign="center">
+                            <td align="center" colspan="2">
+                                &nbsp;Busca do Cat&aacute;logo de Produtos
+                            </td>
+                        </tr>
+                        <tr><td colspan="2" height="4px"></td></tr>
+                        <tr valign="bottom" class="texto2" height="25">
+                            <td>&nbsp;</td>
+                            <td>
+                                Digite a palavra ou parte da palavra a ser pesquisada:<br>
+                                <font class="Texto4">(m&iacute;nimo de 2 letras iniciais da palavra pesquisada)</font>
+                            </td>
+                        </tr>
+                        <tr valign="top" class="Texto1" height="20">
+                            <td>&nbsp;</td>
+                            <td>
+                                <input TYPE="Text" class="CaixaTexto" maxLength="128" name="chr_PalavraPesquisada" id="frm_chr_PalavraPesquisada1" size="85">
+                                <input TYPE="Hidden" name="chr_PalavraPesquisadaHidden" value="cimento">
+                            </td>
+                        </tr>
+                        <tr><td colspan="2" height="4px"></td></tr>
+                    </table>
+                    <table border="0" cellspacing="0" cellpadding="0" width="610" height="1" align="center">
+                        <tr>
+                            <td align="right"><font class="Link4">&gt;&gt;&nbsp;<a id="cat_anchor1" href="Catalogo.asp?Acao=BA&amp;CTRL=">Busca Avanada</a></font></td>
+                        </tr>
+                    </table>
+                </form>
+
+                <TABLE border=0 height=1 cellSpacing=0 cellPadding=0
+                       width=610 align=center>
+                    <TBODY>
+                        <TR>
+                            <td width="100%" height="25" align="middle">
+                                <script>ExibeBotaoTxt('Pesquisar' , '#2154B5' , 'Checa_e_Exec_Busca(\'BS\'); return false;' , '' , true , 'botao_Pesquisar1' )</script>
+                            </td>
+
+                        </TR>
+                    </TBODY>
+                </TABLE><BR>
+
+                <table border="0" cellspacing="0" cellpadding="0" width="610">
+                    <tr>
+                        <td class="texto1">Pesquisa por <b>'cimento'</b> em Categorias, Fornecedores e Produtos.</td>
+                    </tr>
+                </table>
+
+                <table class="Tabela1" border="0" cellspacing="0" cellpadding="0" width="610" height="1" align="center">
+                    <tr class="TituloTabela3" valign="center">
+                        <td align="center" colspan="2">
+                            &nbsp;Resultado da Pesquisa
+                        </td>
+                    </tr>
+
+                    <tr><td colspan="2" height="4px"></td></tr>
+
+                    <tr valign="Left">
+                        <td>&nbsp;</td>
+                        <td align="Left" class="texto2">Em Categorias:</td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+
+                        <td align="left">
+                            &nbsp;&nbsp;&nbsp;<font class="Link3"><a id="qtdecat_anchor2" href="#" onclick="javascript:LinkEnviaForm('','LC');return false;">Foram encontradas 3 refer&ecirc;ncia(s)</a>...</font>
+                        </td>
+
+                    </tr>
+
+                    <tr><td colspan="2" height="6px"></td></tr>
+
+                    <tr valign="Left">
+                        <td>&nbsp;</td>
+                        <td align="Left" class="texto2">Em Fornecedores:</td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+
+                        <td align="left">
+                            &nbsp;&nbsp;&nbsp;<font class="Link3"><a id="qtdeforn_anchor3" href="#" onclick="javascript:LinkEnviaForm('','LF');return false;">Foram encontradas 107 refer&ecirc;ncia(s) para fabricantes</a>...</font>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+
+                        <td align="left">
+                            &nbsp;&nbsp;&nbsp;<font class="Link3"><a id="qtdedist_anchor4" href="#" onclick="javascript:LinkEnviaForm('','LD');return false;">Foram encontradas 124 refer&ecirc;ncia(s) para distribuidores</a>...</font>
+                        </td>
+
+                    </tr>
+
+                    <tr><td colspan="2" height="6px"></td></tr>
+
+                    <tr valign="Left">
+                        <td>&nbsp;</td>
+                        <td align="Left" class="texto2">Em Produtos:</td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+
+                        <td align="left">
+                            &nbsp;&nbsp;&nbsp;<font class="Link3"><a id="qtdeprod_anchor5" href="#" onclick="javascript:LinkEnviaForm('','LP');return false;">Foram encontradas 142 refer&ecirc;ncia(s)</a>...</font>
+                        </td>
+
+                    </tr>
+
+                    <tr><td colspan="2" height="4px"></td></tr>
+
+                </table>
+                <br><br><br>
+
+            </DIV>
+        </DIV>
+
+
+        <!------ RODAPÉ ------>
+        <div id="rodape">
+            <a href="../Index.asp">Home</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="../PaginasCartao/Noticia.asp?Acao=CV&CTRL=&cod=38&amp;Exibe=S">Recomendações&nbsp;de&nbsp;Segurança</a>
+
+
+        </div>
+
+
+
+        <!-- Google Analytics -->
+        <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36810152-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+        </script>
+
+    </div>
+
+</body>
+</html>
+

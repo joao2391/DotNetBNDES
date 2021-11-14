@@ -1,0 +1,306 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DotNet.BNDES</name>
+    </assembly>
+    <members>
+        <member name="T:DotNet.BNDES.Banco">
+            <summary>
+            Classe Banco
+            </summary>
+        </member>
+        <member name="P:DotNet.BNDES.Banco.Nome">
+            <summary>
+            Nome do Banco
+            </summary>
+        </member>
+        <member name="T:DotNet.BNDES.Bancos">
+            <summary>
+            Classe Bancos
+            </summary>
+        </member>
+        <member name="M:DotNet.BNDES.Bancos.#ctor(DotNet.BNDES.IHttpClientWrapper)">
+            <summary>
+            Construtor para instanciar a classe HttpClientWrapper via injeção de dependência.
+            </summary>
+            <param name="httpClientWrapper">Objeto HttpClientWrapper</param>
+        </member>
+        <member name="M:DotNet.BNDES.Bancos.GetBancosCredenciadosAsync">
+            <summary>
+            Busca os bancos credenciados
+            </summary>
+            <returns>Bancos Credenciados</returns>
+            <exception cref="T:System.Net.Http.HttpRequestException">HttpRequestException</exception>
+            <exception cref="T:HtmlAgilityPack.HtmlWebException">HtmlWebException</exception>
+        </member>
+        <member name="T:DotNet.BNDES.BancosCredenciados">
+            <summary>
+            Classe Bancos Credenciados
+            </summary>
+        </member>
+        <member name="P:DotNet.BNDES.BancosCredenciados.Bancos">
+            <summary>
+            Lista de Bancos
+            </summary>
+        </member>
+        <member name="P:DotNet.BNDES.BancosCredenciados.Mensagem">
+            <summary>
+            Mensagem padrão
+            </summary>
+        </member>
+        <member name="T:DotNet.BNDES.IBancos">
+            <summary>
+            Interface para a classe Bancos
+            </summary>
+        </member>
+        <member name="M:DotNet.BNDES.IBancos.GetBancosCredenciadosAsync">
+            <summary>
+            Busca os bancos credenciados
+            </summary>
+            <returns>Bancos Credenciados</returns>
+        </member>
+        <member name="T:DotNet.BNDES.Cartao">
+            <summary>
+            Classe Cartao
+            </summary>
+        </member>
+        <member name="M:DotNet.BNDES.Cartao.#ctor(DotNet.BNDES.IHttpClientWrapper)">
+            <summary>
+            Construtor para instanciar a classe HttpClientWrapper via injeção de dependência.
+            </summary>
+            <param name="httpClientWrapper">Objeto HttpClientWrapper</param>
+        </member>
+        <member name="M:DotNet.BNDES.Cartao.GetFornecedoresByNameAsync(System.String,System.Int32)">
+            <summary>
+            Busca os fornecedores cadastrados no BNDES pelo nome.
+            </summary>
+            <param name="nomeFornecedor">Nome do Fornecedor</param>
+            <param name="pagina">Paginação da consulta.</param>
+            <returns>Catalogo de Fornecedores</returns>
+            <exception cref="T:System.Net.Http.HttpRequestException">HttpRequestException</exception>
+            <exception cref="T:Newtonsoft.Json.JsonSerializationException">JsonSerializationException</exception>
+        </member>
+        <member name="M:DotNet.BNDES.Cartao.GetFornecedoresByNomeProdutoAsync(System.String,System.Int32)">
+            <summary>
+            Busca os fornecedores cadastrados no BNDES pelo nome do produto.
+            </summary>
+            <param name="nomeProduto">Nome do Produto</param>
+            <param name="pagina">Paginação da consulta.</param>
+            <returns>Catalogo de Fornecedores</returns>
+            <exception cref="T:System.Net.Http.HttpRequestException">HttpRequestException</exception>
+            <exception cref="T:Newtonsoft.Json.JsonSerializationException">JsonSerializationException</exception>
+        </member>
+        <member name="M:DotNet.BNDES.Cartao.GetProdutosByNameAsync(System.String,System.Int32)">
+            <summary>
+            Busca os produtos cadastrados no BNDES pelo nome.
+            </summary>
+            <param name="nomeProduto">Nome do Produto</param>
+            <param name="pagina">Paginação da consulta.</param>
+            <returns>Catalogo de Produtos</returns>
+            <exception cref="T:System.Net.Http.HttpRequestException">HttpRequestException</exception>
+            <exception cref="T:HtmlAgilityPack.HtmlWebException">HtmlWebException</exception>
+        </member>
+        <member name="T:DotNet.BNDES.CatalogoFornecedores">
+            <summary>
+            Classe Catalogo Fornecedores
+            </summary>
+        </member>
+        <member name="P:DotNet.BNDES.CatalogoFornecedores.Fornecedores">
+            <summary>
+            Array de Fornecedores dentro do Catalogo
+            </summary>
+        </member>
+        <member name="T:DotNet.BNDES.CatalogoProdutos">
+            <summary>
+            Classe Catalogo de Produtos
+            </summary>
+        </member>
+        <member name="P:DotNet.BNDES.CatalogoProdutos.Produtos">
+            <summary>
+            Lista de Produtos
+            </summary>
+        </member>
+        <member name="P:DotNet.BNDES.CatalogoProdutos.QuantidadePaginas">
+            <summary>
+            Quantidade de Páginas
+            </summary>
+        </member>
+        <member name="P:DotNet.BNDES.CatalogoProdutos.QuantidadeProdutos">
+            <summary>
+            Quantidade de Produtos
+            </summary>
+        </member>
+        <member name="P:DotNet.BNDES.CatalogoProdutos.PaginaAtual">
+            <summary>
+            Página Atual
+            </summary>
+        </member>
+        <member name="T:DotNet.BNDES.Fornecedor">
+            <summary>
+            Classe Fornecedor
+            </summary>
+        </member>
+        <member name="P:DotNet.BNDES.Fornecedor.TotalRegistros">
+            <summary>
+            Total de Registros
+            </summary>
+        </member>
+        <member name="P:DotNet.BNDES.Fornecedor.UltimaPaginaGrupo">
+            <summary>
+            Última Página do Grupo
+            </summary>
+        </member>
+        <member name="P:DotNet.BNDES.Fornecedor.NomePessoa">
+            <summary>
+            Nome Pessoa
+            </summary>
+        </member>
+        <member name="P:DotNet.BNDES.Fornecedor.NomeFantasia">
+            <summary>
+            Nome Fantasia
+            </summary>
+        </member>
+        <member name="T:DotNet.BNDES.ICartao">
+            <summary>
+            Interface para a classe Cartao
+            </summary>
+        </member>
+        <member name="M:DotNet.BNDES.ICartao.GetFornecedoresByNomeProdutoAsync(System.String,System.Int32)">
+            <summary>
+            Busca os fornecedores cadastrados no BNDES pelo nome do produto.
+            </summary>
+            <param name="nomeProduto">Nome do Produto</param>
+            <param name="pagina">Paginação da consulta.</param>
+            <returns>Catalogo de Fornecedores</returns>
+        </member>
+        <member name="M:DotNet.BNDES.ICartao.GetFornecedoresByNameAsync(System.String,System.Int32)">
+            <summary>
+            Busca os fornecedores cadastrados no BNDES pelo nome.
+            </summary>
+            <param name="nomeFornecedor">Nome do Fornecedor</param>
+            <param name="pagina">Paginação da consulta.</param>
+            <returns>Catalogo de Fornecedores</returns>
+        </member>
+        <member name="M:DotNet.BNDES.ICartao.GetProdutosByNameAsync(System.String,System.Int32)">
+            <summary>
+            Busca os produtos cadastrados no BNDES pelo nome.
+            </summary>
+            <param name="nomeProduto">Nome do Produto</param>
+            <param name="pagina">Paginação da consulta.</param>
+            <returns>Catalogo de Produtos</returns>
+        </member>
+        <member name="T:DotNet.BNDES.Produto">
+            <summary>
+            Classe Produto
+            </summary>
+        </member>
+        <member name="P:DotNet.BNDES.Produto.NomeProduto">
+            <summary>
+            Nome do Produto
+            </summary>
+        </member>
+        <member name="P:DotNet.BNDES.Produto.NomeFabricante">
+            <summary>
+            Nome do Fabricante
+            </summary>
+        </member>
+        <member name="T:DotNet.BNDES.Constants">
+            <summary>
+            Classe de Constantes
+            </summary>
+        </member>
+        <member name="F:DotNet.BNDES.Constants.URL_POST_REGEX">
+            <summary>
+            URL utilizada se obter a quantidade de itens via Regex
+            </summary>
+        </member>
+        <member name="F:DotNet.BNDES.Constants.URL_POST_PRODUTOS">
+            <summary>
+            URL utilizada para realizar a chamada POST de produtos
+            </summary>
+        </member>
+        <member name="F:DotNet.BNDES.Constants.URL_GET_BANCOS">
+            <summary>
+            URL utilizada para se obter os Bancos
+            </summary>
+        </member>
+        <member name="F:DotNet.BNDES.Constants.XPATH_CHECK_BLOQ">
+            <summary>
+            XPATH para obter o status de bloqueio da página.
+            </summary>
+        </member>
+        <member name="F:DotNet.BNDES.Constants.XPATH_ITENS">
+            <summary>
+            XPATH para obter os itens
+            </summary>
+        </member>
+        <member name="F:DotNet.BNDES.Constants.TOP">
+            <summary>
+            Palavra top
+            </summary>
+        </member>
+        <member name="F:DotNet.BNDES.Constants.S">
+            <summary>
+            Letra s
+            </summary>
+        </member>
+        <member name="F:DotNet.BNDES.Constants.H2">
+            <summary>
+            Tag H2 do HTML
+            </summary>
+        </member>
+        <member name="F:DotNet.BNDES.Constants.XPATH_TEXTO_QTDE_ITENS">
+            <summary>
+            XPATH do texto que contém a quantidade de itens.
+            </summary>
+        </member>
+        <member name="F:DotNet.BNDES.Constants.XPATH_TABELA">
+            <summary>
+            XPATH da tabela
+            </summary>
+        </member>
+        <member name="T:DotNet.BNDES.HttpClientWrapper">
+            <summary>
+            Classe utilizada para abstrair as chamadas HTTP
+            </summary>
+        </member>
+        <member name="M:DotNet.BNDES.HttpClientWrapper.#ctor">
+            <summary>
+            Construtor padrão
+            </summary>
+        </member>
+        <member name="M:DotNet.BNDES.HttpClientWrapper.GetAsync(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            Realiza a chamada GET
+            </summary>
+            <param name="requestMessage">Objeto da Requisição</param>
+            <returns>Task de HttpResponseMessage</returns>
+        </member>
+        <member name="M:DotNet.BNDES.HttpClientWrapper.PostAsync(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            Realiza a chamada POST
+            </summary>
+            <param name="requestMessage">Objeto da Requisição</param>
+            <returns>Task de HttpResponseMessage</returns>
+        </member>
+        <member name="T:DotNet.BNDES.IHttpClientWrapper">
+            <summary>
+            Interface do HttpClientWrapper
+            </summary>
+        </member>
+        <member name="M:DotNet.BNDES.IHttpClientWrapper.GetAsync(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            Método responsável realizar o GET
+            </summary>        
+            <param name="requestMessage">Objeto da Requisição</param>
+            <returns>Task de HttpResponseMessage</returns>
+        </member>
+        <member name="M:DotNet.BNDES.IHttpClientWrapper.PostAsync(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            Método responsável por realizar o POST
+            </summary>        
+            <param name="requestMessage">Objeto da Requisição</param>
+            <returns>Task de HttpResponseMessage</returns>
+        </member>
+    </members>
+</doc>

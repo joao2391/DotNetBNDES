@@ -1,0 +1,31 @@
+{
+  "Catalogo": [
+    {
+      "qtdtotalregistros": 3,
+      "primeirapaginagrupo": 1,
+      "ultimapaginagrupo": 1,
+      "temgrupo": "",
+      "pessoa": 1234567,
+      "nomepessoa": "JOSE",
+      "nomefantasia": "ZEZINHO"
+    },
+    {
+      "qtdtotalregistros": 3,
+      "primeirapaginagrupo": 1,
+      "ultimapaginagrupo": 1,
+      "temgrupo": "",
+      "pessoa": 1234567,
+      "nomepessoa": "JOSE SILVA",
+      "nomefantasia": "ZEZINHO"
+    },
+    {
+      "qtdtotalregistros": 3,
+      "primeirapaginagrupo": 1,
+      "ultimapaginagrupo": 1,
+      "temgrupo": "",
+      "pessoa": 1234567,
+      "nomepessoa": "MADEIREIRA DO ZEZINHO",
+      "nomefantasia": "MADEIREIRA ZEZINHO"
+    }
+  ]
+}
