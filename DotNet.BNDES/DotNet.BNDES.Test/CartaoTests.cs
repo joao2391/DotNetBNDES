@@ -16,8 +16,8 @@ namespace DotNet.BNDES.Test
 
         public CartaoTests()
         {
-            fakeContentJson = File.ReadAllText(@".\FakeData.json");
-            fakeContentHtml = File.ReadAllText(@".\FakeDataQtdeProdutos.html");
+            fakeContentJson = File.ReadAllText(@"./FakeData.json");
+            fakeContentHtml = File.ReadAllText(@"./FakeDataQtdeProdutos.html");
         }
 
 

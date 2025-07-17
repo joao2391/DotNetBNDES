@@ -3,16 +3,16 @@
 DotNet.BNDES is a .Net library that helps you to get infos about BNDES card. This is not the official lib from BNDES!
 
 ## Notes
-Version 1.0.1:
+Version 2.0.0:
 
-- Upgrade to .NET 6
+- Upgrade to .NET 9
 
 ## Installation
 
 Use the package manager to install.
 
 ```bash
-Install-Package DotNetBNDES  -Version 1.0.1
+Install-Package DotNetBNDES  -Version 2.0.0
 ```
 
 ## Usage
