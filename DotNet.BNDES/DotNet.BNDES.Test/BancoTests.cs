@@ -13,7 +13,7 @@ namespace DotNet.BNDES.Test
 
         public BancoTests()
         {
-            fakeContentHtml = File.ReadAllText(@".\FakeDataBancosCredenciados.html");
+            fakeContentHtml = File.ReadAllText(@"./FakeDataBancosCredenciados.html");
         }
 
         [Fact]
